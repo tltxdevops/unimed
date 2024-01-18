@@ -1,0 +1,47 @@
+<style>
+    p {
+        font-size: 24px;
+    }
+</style>
+<script>
+    function verificarRegistro() {
+        var elementosH1 = document.querySelectorAll('h1');
+
+
+        for (var i = 0; i < elementosH1.length; i++) {
+            if (elementosH1[i].textContent.trim() === 'Registro') {
+                clearInterval(intervalId);
+                location.reload();
+                return;
+            } else {
+                console.log("Não encontrado");
+            }
+        }
+    }
+
+
+    var intervalId = setInterval(verificarRegistro, 1000);
+</script>
+<script>
+    function verificarElemento() {
+        var elemento = document.getElementById("ui_login_instruction_message");
+
+
+        if (elemento && elemento.textContent === "Login para acesso de convidados.") {
+            var link = document.createElement("a");
+            link.href = "https://visitantes-01.unimedcuritiba.com.br:8443/portal/SelfRegistration.action?from=LOGIN";
+            link.textContent = "AQUI";
+
+
+            var textoInicial = document.createTextNode("Caso seja seu primeiro acesso, faça seu registro ");
+            var textoFinal = document.createTextNode(" para receber seu login.");
+
+
+            elemento.innerHTML = '';
+            elemento.appendChild(textoInicial);
+            elemento.appendChild(link);
+            elemento.appendChild(textoFinal);
+        }
+    }
+    setInterval(verificarElemento, 1000);
+</script> 
