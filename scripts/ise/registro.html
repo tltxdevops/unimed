@@ -1,0 +1,99 @@
+<style>
+    .cpf-error-border {
+        border: 2px solid red;
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var inputElement = document.getElementById('guestUser.fieldValues.ui_user_name');
+        var submitButton = document.getElementById('ui_self_reg_submit_button');
+        submitButton.parentNode.classList.add('ui-disabled');
+
+        if (inputElement && submitButton) {
+            inputElement.addEventListener('input', function () {
+                var cpf = inputElement.value;
+
+                cpf = cpf.replace(/\D/g, '');
+                if (cpf.length === 11 && /^\d{11}$/.test(cpf)) {
+                    cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+
+                    if (validarCPF(cpf)) {
+                        removerClasseErro(inputElement);
+                        console.log('CPF válido.');
+                        submitButton.parentNode.classList.remove('ui-disabled');
+                    } else {
+                        adicionarClasseErro(inputElement);
+                        console.log('CPF inválido.');
+                        submitButton.parentNode.classList.add('ui-disabled');
+                    }
+                } else {
+                    submitButton.parentNode.classList.add('ui-disabled');
+                }
+            });
+        } else {
+            console.error('Elemento com ID "ui_first_name_label" ou "ui_self_reg_submit_button" não encontrado.');
+        }
+
+        function validarCPF(cpf) {
+            var cpfRegex = /^(?:(\d{3}).(\d{3}).(\d{3})-(\d{2}))$/;
+            if (!cpfRegex.test(cpf)) {
+                return false;
+            }
+
+            var numeros = cpf.match(/\d/g).map(Number);
+            var soma = numeros.reduce((acc, cur, idx) => {
+                if (idx < 9) {
+                    return acc + cur * (10 - idx);
+                }
+                return acc;
+            }, 0);
+
+            var resto = (soma * 10) % 11;
+
+            if (resto === 10 || resto === 11) {resto = 0;}
+
+            if (resto !== numeros[9]) {return false;}
+
+            soma = numeros.reduce((acc, cur, idx) => {
+                if (idx < 10) {
+                    return acc + cur * (11 - idx);
+                }
+                return acc;
+            }, 0);
+
+            resto = (soma * 10) % 11;
+
+            if (resto === 10 || resto === 11) {resto = 0;}
+
+            if (resto !== numeros[10]) {return false;}
+
+            return true;
+        }
+
+
+        function adicionarClasseErro(elemento) {
+            var divPai = encontrarDivPai(elemento);
+            if (divPai) {
+                divPai.classList.add('cpf-error-border');
+            }
+        }
+
+        function removerClasseErro(elemento) {
+            var divPai = encontrarDivPai(elemento);
+            if (divPai) {
+                divPai.classList.remove('cpf-error-border');
+            }
+        }
+
+        function encontrarDivPai(elemento) {
+            var pai = elemento.parentNode;
+            while (pai) {
+                if (pai.tagName === 'DIV') {
+                    return pai;
+                }
+                pai = pai.parentNode;
+            }
+            return null;
+        }
+    });
+</script>
